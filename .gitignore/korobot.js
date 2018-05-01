@@ -3,10 +3,10 @@ const bot = new Discord.Client()
 var randum = 0
 var mention = "@<414373849014992898>";
 var prefix = "k!"
-const conf = require("./conf.json")
 const library = 'discord.js'
+anciennum = 1
 function golog() {
-    bot.login(conf.token)
+    bot.login(token)
 }
 
 function consolelog() {
@@ -19,11 +19,25 @@ consolelog()
 bot.on('ready', () => {
     console.log('Korobot : Version finale\nStatut : en dev\nInformation complépentaires : aucune.')
     bot.user.setGame(prefix + "help => Korobot est encore en dev !")
-    bot.user.setStatus('dnd')
+    bot.user.setGame("k!help || "+bot.guilds.size+" guilds, "+bot.users.size+" servers")
+    bot.user.setStatus('online')
 })
 
 bot.on('message', message => {
+    if (message.content.startsWith("k!srvlist")) {
+        var srvlist_embed = new Discord.RichEmbed()
+            .addField("Serveurs", bot.guilds.size)
+            .addField("Utilisateurs", bot.users.size)
+            .addField("Channels", bot.channels.size)
+            .addField("Ping", bot.ping+"ms")
+        message.channel.sendEmbed(srvlist_embed)
+    }
+    if (message.content.startsWith("k!actusers")) {
+        bot.user.setGame("k!help || "+bot.guilds.size+" guilds, "+bot.users.size+" servers")
+        message.reply("Utilisateurs actualisés ! Merci !")
+    }
     if (message.content.startsWith("k!ban")) {
+        if (message.guild) {
         if (message.guild.member(message.author).hasPermission("BAN_MEMBERS")) {
             if (message.guild.member(bot.user).hasPermission("BAN_MEMBERS")) {
                 var utoban = message.mentions.users.first()
@@ -49,6 +63,7 @@ bot.on('message', message => {
             message.reply("Il te faut la permission __**BAN_MEMBERS**__ pour faire cela.")
         }
     }
+}
 })
 
 bot.on('message', msg => {
@@ -172,7 +187,6 @@ bot.on('message', message => {
 bot.on('message', msg => {
     if (msg.content.includes("@everyone")) {
         msg.react("420936290322743296")
-        msg.channel.send("<a:AniPing:420936290322743296>")
     }
 })
 
@@ -184,17 +198,6 @@ bot.on('message', message => {
     }
 })
 
-bot.on('message', message => {
-    if (message.content.startsWith('k!guildfind')) {
-        if (!message.content.substr(12)) {
-            message.reply(`veuillez entrer l'id d'un serveur`)
-        } else {
-            serverid = message.content.substr(12)
-            message.channel.send(`Vous avez entré l'id du serveur : ` + serverid+` qui correspond au serveur : `)
-        }
-    }
-})
-
 bot.on('guildMemberAdd', member => {
     bot.user.setGame("k!help | " + bot.users.size + " utilisateurs, " + bot.guilds.size + " serveurs.", 'streamingURL', 'http://twitch.tv/mistertitio')
 })
@@ -202,10 +205,10 @@ bot.on('guildMemberAdd', member => {
 bot.on('message', message => {
   if (message.content === prefix+ 'ping') {
     console.log("PING")
-    message.channel.send(':alarm_clock: ping effectué avec succes :tada:')
+    message.channel.send('Ping du bot : **'+bot.ping+"ms**")
   }
 })
-
+ // J'aimerai que ca marche
 
 bot.on('message', message => {
    if (message.content === prefix + 'ocestand') {
@@ -246,7 +249,19 @@ bot.on('message', message => {
 	if (randum == 5){
 		message.channel.send(":8ball: **Boarf.**");
 
-	}
+    }
+    
+    if (randum == 6){
+        var lama_embed = new Discord.RichEmbed()
+            .setImage("https://img.20mn.fr/PI3Ol7lgRlGAs1BMQCgmEw/310x190_lama-rentre-game")
+        message.channel.sendEmbed(lama_embed)
+    }
+
+    if (randum == 7){
+        var jamy_embed = new Discord.RichEmbed()
+            .setImage("http://www.programme.tv/media/cache/relative_max_355x272/upload/epgs/2015/05/c-est-pas-sorcier_12644491_1.jpg")
+        message.channel.sendEmbed(jamy_embed)
+    }
 
    }
 
@@ -527,7 +542,12 @@ golog()
 
 function random(min, max) {
    min = Math.ceil(0);
-   max = Math.floor(5);
+   max = Math.floor(7);
    randum = Math.floor(Math.random() * (max - min +1) + min);
+   if (randum == anciennum) {
+       console.log("random = ancinnum")
+       random()
+   }
+   anciennum = randum
 }
 
