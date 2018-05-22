@@ -6,8 +6,19 @@ var prefix = "k!"
 const library = 'discord.js'
 anciennum = 1
 function golog() {
-    bot.login(token)
+    bot.login('I donot give you my token :D')
 }
+nombre = 1
+bannedkorocomm = "370239167365513217"
+
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+
+const adapter = new FileSync('korocomm.json')
+const db = low(adapter);
+
+db.defaults({ messages: []})
+	.write()
 
 function consolelog() {
     bot.on('ready', () => {
@@ -19,7 +30,7 @@ consolelog()
 bot.on('ready', () => {
     console.log('Korobot : Version finale\nStatut : en dev\nInformation complépentaires : aucune.')
     bot.user.setGame(prefix + "help => Korobot est encore en dev !")
-    bot.user.setGame("k!help || "+bot.guilds.size+" guilds, "+bot.users.size+" servers")
+    bot.user.setGame("k!help || "+bot.guilds.size+" guilds, "+bot.users.size+" users")
     bot.user.setStatus('online')
 })
 
@@ -33,7 +44,7 @@ bot.on('message', message => {
         message.channel.sendEmbed(srvlist_embed)
     }
     if (message.content.startsWith("k!actusers")) {
-        bot.user.setGame("k!help || "+bot.guilds.size+" guilds, "+bot.users.size+" servers")
+        bot.user.setGame("k!help || "+bot.guilds.size+" guilds, "+bot.users.size+" users")
         message.reply("Utilisateurs actualisés ! Merci !")
     }
     if (message.content.startsWith("k!ban")) {
@@ -82,9 +93,9 @@ bot.on('message', msg => {
         .addField("nombre de rôles", msg.guild.roles.size)
         .addField("Fondateur", sowner + '#' + otag)
         .addField("Region", msg.guild.region)
-        .addField("liste de rôles", msg.guild.roles.map(r => r.name).length > 900 ? "Trop de rôles !" : msg.guild.roles.map(r => r.name))
+        .addField("Nombre de roles", msg.guild.roles.size)
         .addField("_ _", "Icone du serveur")
-        .setFooter(msg.author.avatarURL)
+        .setFooter("KoroBot", msg.author.avatarURL)
         msg.channel.send(server_embed)
       }
 
@@ -193,13 +204,11 @@ bot.on('message', msg => {
 bot.on('message', message => {
     if (message.content.startsWith('k!cchar')) {
         let contenttoconvert = message.content.substr(7)
+        if (contenttoconvert){
         var ctclenght = contenttoconvert.length
         message.channel.send('Votre message fait'+ctclenght+' caracteres.')
+        }
     }
-})
-
-bot.on('guildMemberAdd', member => {
-    bot.user.setGame("k!help | " + bot.users.size + " utilisateurs, " + bot.guilds.size + " serveurs.", 'streamingURL', 'http://twitch.tv/mistertitio')
 })
 
 bot.on('message', message => {
@@ -263,11 +272,75 @@ bot.on('message', message => {
         message.channel.sendEmbed(jamy_embed)
     }
 
-   }
+    if (randum == 8){
+        var ah_embed = new Discord.RichEmbed()
+            .setImage("https://cdn.discordapp.com/attachments/440582778770423818/440817628668231681/com.png")
+        message.channel.sendEmbed(ah_embed)
+    }
 
+   }
+   
+
+   if (message.content.startsWith("korocomm!normal")) {
+    if (message.author.id == "304541381798658048" || message.author.id == "312861112909561856") {
+        if (message.content.includes("@everyone") || message.content.includes("@here")) return;
+        if (!message.content.substr("korocomm!normal ".length)) return;
+        var value = message.content.substr("korocomm!normal ".length)
+        var number = db.get('messages').map('id').value();
+     
+     db.get('messages')
+	.push({ id: nombre + 1, message : value, envoyepar : message.author.tag})
+	.write();
+
+        message.delete()
+        bot.channels.findAll('name', 'korommunication').map(channel => channel.send("Message par "+message.author.tag+" : "+message.content.substr("korocomm!normal ".length)))
+    }
+   }
+    if (message.channel.name == "korommunication") {
+        if (message.content.startsWith("korocomm!normal")) return;
+        if (message.author.id == bannedkorocomm) return;
+        let aenvoyer = message.content
+        if (message.author.bot) return;
+        if (message.content.startsWith("korom!normal")) return;
+        var value = message.content
+        var number = db.get('messages').map('id').value();
+     
+     db.get('messages')
+	.push({ id: nombre + 1, message : value, envoyepar : message.author.tag})
+	.write();
+
+        if (message.author.id == "370593040706043905" || message.author.id == "304000871077773312" || message.author.id == "269916752564060170") {
+            if (!aenvoyer) return;
+            message.delete()
+            var chatm_embed = new Discord.RichEmbed()
+                .setColor("#000BE1")
+                .addField("Par", message.author.tag+" (Staff Korommunication)")
+                .addField("Message", aenvoyer)
+                .setFooter(message.guild.name, message.guild.iconURL)
+            bot.channels.findAll('name', 'korommunication').map(channel => channel.sendEmbed(chatm_embed))
+        } else if (message.author.id == "304541381798658048" || message.author.id == "312861112909561856") {
+            if (!aenvoyer) return;
+            message.delete()
+            var chatf_embed = new Discord.RichEmbed()
+                .setColor("#FE0101")
+                .addField("Par", message.author.tag+" (Fonda Korommunication)")
+                .addField("Message", aenvoyer)
+                .setFooter(message.guild.name, message.guild.iconURL)
+            bot.channels.findAll('name', 'korommunication').map(channel => channel.sendEmbed(chatf_embed))
+        } else {
+        if (!aenvoyer) return;
+        message.delete()
+        var chat_embed = new Discord.RichEmbed()
+            .addField("Par", message.author.tag)
+            .addField("Message", aenvoyer)
+            .setFooter(message.guild.name, message.guild.iconURL)
+        bot.channels.findAll('name', 'korommunication').map(channel => channel.sendEmbed(chat_embed))
+        }
+    }
 })
 
 bot.on('message', message => {
+
     if (message.content.startsWith("k!suggest")) {
         let suggestion = message.content.substr(10)
         if (!suggestion) {
@@ -321,27 +394,11 @@ bot.on('message', message => {
   if (message.content === prefix + 'dev') {
      var dev_embed = new Discord.RichEmbed()
              .setColor('#2DDCC5')
-             .addField("Des soutiens ?", "Mes developpeurs sont NewGlace#6717 et ๖̶̶̶ۣۣۜۜ͜ζ͜͡Koro fait des bots#0912, allez leur dire bonjour en MP ca lui fera plaisir !")
-             .setFooter("KoroBot, ๖̶̶̶ۣۣۜۜ͜ζ͜͡Koro fait des bots#0912")
+             .addField("Des soutiens ?", "Mon développeur est Mister_KoRo#0912, allez lui dire bonjour en MP ca lui fera plaisir !")
+             .setFooter("KoroBot, Mister_KoRo#0912")
      message.channel.sendEmbed(dev_embed)
    // message.reply("Mon developpeur est Mister_KoRo#0912, allez lui dire bonjour en MP ca lui fera plaisir ! Twitter : http://twitter.com/mister_koro  (un petit follow ferait plaisir :D) YouTube : http://bit.ly/KoroSurYouTube (on te remerciras si tu t'abonnes.)")
   }
-})
-
-bot.on('message', message => {
-	if (message.content === prefix + 'pub') {
-		var pub_embed = new Discord.RichEmbed()
-		.setColor('#2DDCC5')
-		.addField("Pub déposée par -Ganou18-", "https://discord.gg/dyAxygF")
-		.addField("Pub déposée par [AzOxE-Team] ZroxYT", "https://discord.gg/2Ur5YET")
-		.addField("Pub déposée par Ninoyoshi", "https://discord.gg/VXPKsXX")
-		.addField("Pub déposée par Konoa-Chan", "https://discord.gg/vSAKjxX")
-		.addField("Pub déposée par MouMou73", "https://discord.gg/JzngfYY")
-		.addField("Pub déposée par Standardiste", "https://discord.gg/S6rK5K")
-		.addField("Pub déposée par standu14", "Voilà un serveur ou le thème principal est la voiture ! https://discord.gg/ks4n546")
-		.setFooter("Vous aussi vous voulez avoir votre pub dans le k!pub ? Fais k!dev et contacte mon développeur !")
-	message.channel.sendEmbed(pub_embed)
-	}
 })
 
 bot.on('message', message => {
@@ -352,13 +409,20 @@ bot.on('message', message => {
 		.addField("k!pub", "Affiche la liste des publicités")
 		.addField("k!invite", "Envoie le lien d'invitation du bot et au support")
 		.addField("k!dev", "Qui est mon développeur ?")
-		.addField("k!help", "Vous envoie ce menu")
+        .addField("k!help", "Vous envoie ce menu")
+        .addField("k!userinfo @user", "envoie les informations sur l'utilisateur mentionné")
+        .addField("k!suggest [suggestion]", "envoyer une suggestion au créateur du bot")
+        .addField("Korommunication", "Intercommunication entre différents serveurs. Créez le channel Korommunication avant.")
+        .addField("k!cchar [message]", "calculer le nombre de caractères dans votre message.")
+        .addField("k!serverinfo", "envoie des informations sur le serveur")
+        .addField("k!typing @user", "faire comme si un utilisateur était en train d'écrire")
+        .addField("k!actusers", "actualiser les utilisateurs du bot")
 		.addField("_ _", "_ _")
 		.addField(":game_die: Fun", "_ _")
 		.addField("k!8ball", "Faites k!8ball <question> et le bot vous répond !")
 		.addField("_ _", "_ _")
 		.addField(":gear: Modération", "_ _")
-		.addField("Désolé...", "Toutes ces commandes sont en développement")
+		.addField("k!ban @utilisateur", "bannir une personne du serveur")
 		.setFooter("KoroBot, 2018")
 	message.channel.sendEmbed(help_embed)
 	}
@@ -434,17 +498,15 @@ bot.on('message', message => {
 })
 
 bot.on('message', message => {
-    if (message.guild.id == "372663313697472512") {
-        if (message.content.startsWith("k!symphonya")) {
-            let ctouse = message.content.substr(12)
-                let numbere = message.content.substr(12+6)
+        if (message.content.startsWith("k!clear")) {
+            let ctouse = message.content.substr(8)
+                let numbere = message.content.substr(8)
                 if (numbere < 100) {
                     message.channel.bulkDelete(numbere)
                 } else {
                     message.reply("le nombre se doit d'être plus petit que 100.")
                 }
 
-        }
     }
 })
 
@@ -542,7 +604,7 @@ golog()
 
 function random(min, max) {
    min = Math.ceil(0);
-   max = Math.floor(7);
+   max = Math.floor(8);
    randum = Math.floor(Math.random() * (max - min +1) + min);
    if (randum == anciennum) {
        console.log("random = ancinnum")
